@@ -113,6 +113,11 @@ REPLACEMENTS = [
     ("764 peer-reviewed publications", f"{N_PAPERS} peer-reviewed publications"),
     ("the corrected CBNR analytical release contains 1,021",
      f"the corrected CBNR analytical release contains {N_EVENTS:,}"),
+    # Swap (a) and (b) in Figure 2 caption to reflect the new layout where
+    # the point map is (a) on the left and the count map is (b) on the right.
+    # 用户互换 Fig 2 (a)(b) 位置后，图题描述同步互换。
+    ("(a) Number of validated provincial-level new bird records in each Chinese provincial-level administrative unit. Warmer colors indicate higher numbers of records. (b) Geographic locations of validated new-record events, colored by major taxonomic orders; less frequently represented orders are grouped as “Others”.",
+     "(a) Geographic locations of validated new-record events, colored by major taxonomic orders; less frequently represented orders are grouped as “Others”. (b) Number of validated provincial-level new bird records in each Chinese provincial-level administrative unit. Warmer colors indicate higher numbers of records."),
 ]
 n_done = 0
 for old, new in REPLACEMENTS:

@@ -66,29 +66,52 @@ for (suff in c(".pdf", ".pptx")) {
                               paste0("figure2_panel_c_sankey_topN", suff)), overwrite = TRUE)
 }
 
-# ----- Determine common width for all 3 panels -----
-# Strategy: render all three panels into a single image grid, with the
-# top-row width (a + b side-by-side) equalling the bottom-row sankey width.
-# 上行 (a + b) 宽度等于下行 sankey 宽度，三 panel 整体对齐。
+# ----- Trim each panel's white margins for tighter composition -----
+# 用 magick::image_trim 先剔除每张子图四周白边，再做拼合，便于：
+# (1) (a)(b) 拉近至几乎无间距；(2) sankey (c) 内容宽度与 (a)+(b) 严格对齐。
+trim_to_tmp <- function(src, name) {
+  out <- file.path(fig_v3, paste0("_trim_", name, ".png"))
+  img <- magick::image_read(src) |> magick::image_trim(fuzz = 10)
+  magick::image_write(img, out, format = "png", quality = 100, density = 600)
+  list(path = out, info = magick::image_info(img))
+}
+ta <- trim_to_tmp(img_a, "a_count")   # count map (was a)
+tb <- trim_to_tmp(img_b, "b_point")   # point map (was b)
+tc <- trim_to_tmp(img_c, "c_sankey")  # sankey
 
-w_combined_in <- 13.6      # total figure width in inches
+# ----- Layout config -----
+# Swap requested by user: point map → LEFT and labelled (a);
+#                         count map → RIGHT and labelled (b).
+# 用户要求互换：点分布图（原 b）置左侧并标 (a)；计数地图（原 a）置右侧并标 (b)。
+left_panel  <- tb   # point map → new (a)
+right_panel <- ta   # count map → new (b)
+sankey      <- tc
+
+w_combined_in <- 13.6
 half_w        <- w_combined_in / 2
-top_h_in      <- 4.8       # height for top maps
-bot_h_in      <- 5.4       # height for sankey
+ar_left   <- left_panel$info$height  / left_panel$info$width
+ar_right  <- right_panel$info$height / right_panel$info$width
+top_h_in  <- max(half_w * ar_left, half_w * ar_right)
+ar_sankey <- sankey$info$height / sankey$info$width
+bot_h_in  <- w_combined_in * ar_sankey
 h_combined_in <- top_h_in + bot_h_in
 
-# Read panels via magick → ggdraw
+# Read panels via magick → ggdraw with tracked labels
 draw_panel_with_label <- function(path, lab) {
   ggdraw() + draw_image(path) +
     draw_label(lab, x = 0.005, y = 0.985, hjust = 0, vjust = 1,
                size = 16, fontface = "bold", colour = "#222")
 }
-p_a <- draw_panel_with_label(img_a, "(a)")
-p_b <- draw_panel_with_label(img_b, "(b)")
-p_c <- draw_panel_with_label(img_c, "(c)")
+p_a <- draw_panel_with_label(left_panel$path,  "(a)")
+p_b <- draw_panel_with_label(right_panel$path, "(b)")
+p_c <- draw_panel_with_label(sankey$path,      "(c)")
 
-top_row <- plot_grid(p_a, p_b, ncol = 2, rel_widths = c(1, 1))
-fig2 <- plot_grid(top_row, p_c, ncol = 1, rel_heights = c(top_h_in, bot_h_in))
+# Tighter top row (no extra inter-panel gap), aligned to bottom sankey width
+top_row <- plot_grid(p_a, p_b, ncol = 2, rel_widths = c(1, 1),
+                      align = "h", axis = "tblr")
+fig2 <- plot_grid(top_row, p_c, ncol = 1,
+                   rel_heights = c(top_h_in, bot_h_in),
+                   align = "v", axis = "lr")
 
 # Save composite
 ggsave(file.path(fig_v3, "figure2_combined_aligned.png"), fig2,
