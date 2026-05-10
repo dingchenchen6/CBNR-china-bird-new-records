@@ -203,12 +203,15 @@ p_compact <- ggplot(
   labs(x = NULL, y = "Number of records") +
   theme_minimal(base_size = 11, base_family = "sans") +
   theme(
-    axis.text.x = element_text(face = "bold", size = 12.5, color = "#303030"),
+    # Bring x-axis labels (Order/Province/Year) closer to the strata above
+    # 通过收紧 axis.text.x 顶部 margin，让 Order/Province/Year 紧贴 sankey 主体上方
+    axis.text.x = element_text(face = "bold", size = 12.5, color = "#303030",
+                                margin = margin(t = 1)),
     axis.text.y = element_blank(),
     axis.ticks = element_blank(),
     axis.title = element_text(face = "bold", size = 12.5),
     panel.grid = element_blank(),
-    plot.margin = margin(12, 8, 12, 8)
+    plot.margin = margin(6, 8, 4, 8)
   )
 
 # -------------------------------

@@ -106,12 +106,20 @@ p_a <- draw_panel_with_label(left_panel$path,  "(a)")
 p_b <- draw_panel_with_label(right_panel$path, "(b)")
 p_c <- draw_panel_with_label(sankey$path,      "(c)")
 
-# Tighter top row (no extra inter-panel gap), aligned to bottom sankey width
-top_row <- plot_grid(p_a, p_b, ncol = 2, rel_widths = c(1, 1),
-                      align = "h", axis = "tblr")
-fig2 <- plot_grid(top_row, p_c, ncol = 1,
-                   rel_heights = c(top_h_in, bot_h_in),
-                   align = "v", axis = "lr")
+# Add a small ~1.5-letter-wide gap between (a)/(b) and a similar visible
+# gap between top row and sankey (c). NULL spacers in cowplot give clean
+# control over inter-panel spacing.
+# 在 (a)(b) 之间以及上行与 (c) 之间留 1.5 个字母宽度的小间距。
+gap_in    <- 0.15  # ~1.5 character widths at 16 pt
+top_row <- plot_grid(p_a, NULL, p_b, ncol = 3,
+                      rel_widths = c(1, gap_in / (half_w - gap_in / 2), 1),
+                      align = "h", axis = "tb")
+# Vertical spacer between top maps and sankey
+fig2 <- plot_grid(top_row, NULL, p_c, ncol = 1,
+                   rel_heights = c(top_h_in,
+                                    gap_in,
+                                    bot_h_in))
+h_combined_in <- top_h_in + gap_in + bot_h_in
 
 # Save composite
 ggsave(file.path(fig_v3, "figure2_combined_aligned.png"), fig2,
