@@ -1,0 +1,4 @@
+scenario,n_records_with_polygon,pct_records,median_dist_centroid_km,median_dist_edge_km,pct_inside_range,mean_point_temp_delta_C,mean_range_temp_delta_C,mean_niche_shift_temp_C
+S1: Resident+Breeding (BOTW2024),762,74.7%,1936,510,10.5%,0.887,0.859,1.011
+S2: BOTW_clean (user-curated 466 spp),771,75.6%,1262,548,10.2%,0.901,NA,NA
+S3: All Seasons (BOTW2024),860,84.3%,2024,469,14.8%,0.884,0.813,-0.775

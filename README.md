@@ -2,7 +2,7 @@
 
 **Authors:** Chenchen Ding (Peking University) & coauthors
 **Status:** Scientific Data manuscript in preparation
-**Repository date:** 2026-05-10
+**Repository date:** 2026-05-11 (directional 3-scenario release)
 
 A reproducible, peer-reviewed literature-based database of provincial-level
 new bird distribution records in China, plus the analytical pipeline that
@@ -26,6 +26,28 @@ manuscript.
 | Provincial-level units            | 33 |
 | Source articles                   | 670 |
 | Year span                         | 1981 – 2025 |
+
+---
+
+## Directional analysis — three range-definition scenarios / 三方案方向性分析
+
+For each new record, bearing, distance and lon/lat displacement are computed
+against the species' historical BirdLife range polygon within China under
+**three alternative range definitions**:
+
+每条新纪录在以下 **三种范围定义** 下计算方位、位移、距离与经纬度变化：
+
+| Scenario | Range definition | Records covered | Median dist. to centroid | Median dist. to edge | Mean point ΔT (°C, 1970–2000 → year-of-record) |
+|---|---|---|---|---|---|
+| **S1** | Resident + Breeding (BOTW 2024, SEASONAL=1,2) | 762 (74.7%) | 1,936 km | 510 km | +0.89 |
+| **S2** | User-curated `BOTW_clean.gpkg` (466 species pre-clipped) | 771 (75.6%) | 1,262 km | 548 km | +0.90 |
+| **S3** | All seasonal categories pooled (no filter) | 860 (84.3%) | 2,024 km | 469 km | +0.88 |
+
+- Synonyms resolved via the BirdLife HBW v9 checklist (11,195 accepted + 2,734 alternative forms).
+- 563/564 CBNR species mapped to BirdLife taxonomy; 1 unmatched name audited.
+- Climate metrics use WorldClim v2.1 5 m × 5 m baseline + CRU TS annual data.
+
+Main outputs are in `data/directional_3scenarios/` and `figures/directional_3scenarios/`.
 
 ---
 

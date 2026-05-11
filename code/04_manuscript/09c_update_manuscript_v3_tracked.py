@@ -224,9 +224,12 @@ fc_caption._p.append(_ins(
     "order-level coverage with Wilson 95% confidence intervals); Stage 5: "
     "manuscript outputs (Figures 1, 2, 5 and Tables 2–3)."))
 
-# ---- Append Figure 3: directional patterns ----
-# 嵌入 Figure 3：新纪录点相对 BirdLife 范围中心与最近边缘的方向性
-fig3_path = TASK_ROOT / "directional_v3" / "figures" / "figure3_directional_combined.png"
+# ---- Append Figure 3: 3-scenario directional + climate ----
+# 嵌入 Figure 3 (3-scenario)：基于 BOTW 2024/BOTW_clean 三方案的方向 + 气候表
+fig3_3scn = TASK_ROOT / "directional_v3_3scn" / "figures" / \
+    "figure3_directional_3scenarios_combined.png"
+fig3_path = fig3_3scn if fig3_3scn.exists() else \
+    TASK_ROOT / "directional_v3" / "figures" / "figure3_directional_combined.png"
 if fig3_path.exists():
     # Read directional run log for accurate numbers
     log_path = TASK_ROOT / "directional_v3" / "results" / "directional_v3_run_log.md"
@@ -240,34 +243,70 @@ if fig3_path.exists():
             elif "records outside polygon" in line:
                 try: n_outside = int(line.split(":")[-1].strip())
                 except: pass
+    # Pull 3-scenario coverage from local merged CSV
+    merged_csv = TASK_ROOT / "directional_v3_3scn" / "data" / \
+        "cbnr_directional_3scenarios_merged.csv"
+    s1_n = s2_n = s3_n = None
+    if merged_csv.exists():
+        mdf = pd.read_csv(merged_csv)
+        s1_n = mdf["resident_breeding_distance_to_range_centroid_km"].notna().sum()
+        s2_n = mdf["bot_distance_to_centroid_km"].notna().sum()
+        s3_n = mdf["all_seasons_distance_to_range_centroid_km"].notna().sum()
+    if fig3_3scn.exists() and s1_n is not None:
+        cap_text = (
+            "Figure 3 | Directional structure of provincial-level new bird records "
+            f"relative to historical BirdLife range polygons in China — three "
+            f"alternative range-definition scenarios. Scenario 1 = resident + breeding "
+            f"(BirdLife BOTW 2024 with seasonal codes 1 ∪ 2; "
+            f"{s1_n}/{N_EVENTS:,} = {100*s1_n/N_EVENTS:.1f}% records covered); "
+            f"Scenario 2 = the user-curated BOTW_clean.gpkg (466 species pre-clipped "
+            f"to China; {s2_n}/{N_EVENTS:,} = {100*s2_n/N_EVENTS:.1f}% covered); "
+            f"Scenario 3 = all seasonal categories pooled (no seasonal filter; "
+            f"{s3_n}/{N_EVENTS:,} = {100*s3_n/N_EVENTS:.1f}% covered, including "
+            f"wintering and passage ranges of migratory species). "
+            f"Top row (a-c): overall windroses of the 8-sector direction from the "
+            f"BirdLife-range centroid in China to each new-record point. "
+            f"Middle row (d-f): windroses for records that fall OUTSIDE the historical "
+            f"polygon, measured from the nearest polygon edge to the record. "
+            f"Bottom panel (g): per-order 4 × 4 windrose facets for the maximum-"
+            f"coverage Scenario 3. Synonyms between Catalogue of Life China 2025 and "
+            f"BirdLife HBW v9 nomenclature were reconciled via the BirdLife v9 "
+            f"checklist (accepted = 11,195 names; 2,734 alternative forms). "
+            f"Climate change metrics for each scenario, including baseline (1970–2000) "
+            f"range-mean temperature/precipitation and the year-of-record deltas, "
+            f"are listed in the merged metrics table and in the scenario climate "
+            f"summary (results/scenario_climate_summary.csv)."
+        )
+    else:
+        cap_text = (
+            "Figure 3 | Directional structure of provincial-level new bird records "
+            f"relative to historical BirdLife range polygons within China. Among "
+            f"{N_EVENTS:,} validated species–province events, {n_with_poly} ("
+            f"{100*n_with_poly/N_EVENTS:.1f}%) corresponded to a species whose "
+            f"resident or breeding BirdLife range polygon intersects China; the "
+            f"remainder are species whose BirdLife resident/breeding range does "
+            f"not include China at all and therefore represent the very first "
+            f"appearance of the species within Chinese territory. Of the "
+            f"{n_with_poly} polygon-matched records, {n_outside} ("
+            f"{100*n_outside/n_with_poly:.1f}%) fall outside the historical range "
+            f"polygon (true provincial-level expansion beyond known range) and "
+            f"the remainder fall inside (provincial-level fill-in within known range). "
+            f"(a) Overall directional distribution of new records relative to the "
+            f"centroid of each species' historical BirdLife range in China. "
+            f"(b) Overall directional distribution of records that fall outside "
+            f"the historical range, measured from the nearest polygon edge to the "
+            f"record. (c) Per-order 4 × 4 windrose facets (centroid-based "
+            f"reference). Synonyms between Catalogue of Life China 2025 and "
+            f"BirdLife HBW v9 nomenclature were reconciled using the BirdLife "
+            f"v9 checklist (accepted = 11,195 names; synonyms = 2,734 alternative "
+            f"forms); 563 of 564 CBNR species were matched (one unmatched name "
+            f"is reported in the synonym audit table).")
     f3_h = doc2.add_paragraph(style="Heading 1")
     f3_h._p.append(_ins("Directional patterns relative to BirdLife range polygons"))
     f3_p = doc2.add_paragraph()
     f3_p.add_run().add_picture(str(fig3_path), width=Inches(6.5))
     f3_cap = doc2.add_paragraph()
-    f3_cap._p.append(_ins(
-        "Figure 3 | Directional structure of provincial-level new bird records "
-        f"relative to historical BirdLife range polygons within China. Among "
-        f"{N_EVENTS:,} validated species–province events, {n_with_poly} ("
-        f"{100*n_with_poly/N_EVENTS:.1f}%) corresponded to a species whose "
-        f"resident or breeding BirdLife range polygon intersects China; the "
-        f"remainder are species whose BirdLife resident/breeding range does "
-        f"not include China at all and therefore represent the very first "
-        f"appearance of the species within Chinese territory. Of the "
-        f"{n_with_poly} polygon-matched records, {n_outside} ("
-        f"{100*n_outside/n_with_poly:.1f}%) fall outside the historical range "
-        f"polygon (true provincial-level expansion beyond known range) and "
-        f"the remainder fall inside (provincial-level fill-in within known range). "
-        f"(a) Overall directional distribution of new records relative to the "
-        f"centroid of each species' historical BirdLife range in China. "
-        f"(b) Overall directional distribution of records that fall outside "
-        f"the historical range, measured from the nearest polygon edge to the "
-        f"record. (c) Per-order 4 × 4 windrose facets (centroid-based "
-        f"reference). Synonyms between Catalogue of Life China 2025 and "
-        f"BirdLife HBW v9 nomenclature were reconciled using the BirdLife "
-        f"v9 checklist (accepted = 11,195 names; synonyms = 2,734 alternative "
-        f"forms); 563 of 564 CBNR species were matched (one unmatched name "
-        f"is reported in the synonym audit table)."))
+    f3_cap._p.append(_ins(cap_text))
 
 # Update note
 note = (
