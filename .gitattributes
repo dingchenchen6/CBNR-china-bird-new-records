@@ -1,0 +1,45 @@
+# Tell git to use binary diffs / merges for non-text formats.
+# This avoids `git diff` choking on large binary outputs.
+
+# Office documents
+*.docx binary
+*.doc  binary
+*.xlsx binary
+*.xls  binary
+*.pptx binary
+
+# Raster figures
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.tif  binary
+*.tiff binary
+*.pdf  binary
+*.eps  binary
+*.svg  binary
+
+# Geospatial
+*.gpkg binary
+*.shp  binary
+*.dbf  binary
+*.shx  binary
+*.sbn  binary
+*.sbx  binary
+*.tif  binary
+*.nex  binary
+
+# R session caches
+*.rds  binary
+*.RData binary
+
+# Force text mode + UTF-8 for source files
+*.R   text working-tree-encoding=UTF-8 eol=lf
+*.py  text working-tree-encoding=UTF-8 eol=lf
+*.sh  text working-tree-encoding=UTF-8 eol=lf
+*.md  text working-tree-encoding=UTF-8 eol=lf
+*.csv text working-tree-encoding=UTF-8 eol=lf
+
+# Suggest Git LFS for the very large binaries (commented out;
+# enable if you migrate to LFS).
+#*.docx filter=lfs diff=lfs merge=lfs -text
+#*.pptx filter=lfs diff=lfs merge=lfs -text

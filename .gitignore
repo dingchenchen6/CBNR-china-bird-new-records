@@ -8,17 +8,44 @@
 .Rapp.history
 .Rproj.user/
 *.Rproj
+renv/library/
+renv/python/
+renv/staging/
 
 # Python
 __pycache__/
 *.py[cod]
+*$py.class
 .venv/
+venv/
+.ipynb_checkpoints/
 
-# IDE
+# IDE / editor
 .vscode/
 .idea/
+*.swp
 
-# Temporary
+# Tempfiles & intermediates
 *.tmp
 *.tmp.docx
 *_pptx_input.rds
+*.log
+Rplots.pdf
+
+# Build caches
+.cache/
+.pytest_cache/
+
+# Large source files — keep out of git, use Zenodo / Figshare instead
+*.gpkg
+*.shp
+*.dbf
+*.shx
+*.sbn
+*.sbx
+*.tif
+*.nex
+
+# Allow the small repo-internal data sources that DO ship
+!data/external/.gitkeep
+!data/shapefile_base/.gitkeep

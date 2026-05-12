@@ -43,7 +43,21 @@ data_d  <- file.path(OUT_DIR, "data");    dir.create(data_d, FALSE, TRUE)
 fig_d   <- file.path(OUT_DIR, "figures"); dir.create(fig_d,  FALSE, TRUE)
 res_d   <- file.path(OUT_DIR, "results"); dir.create(res_d,  FALSE, TRUE)
 
-server_csv <- "/Users/dingchenchen/Documents/New project/bird_range_climate_shift_metrics/table_new_record_province_year_climate_direction_displacement.csv"
+# Server-computed climate+direction table (resident_breeding + all_seasons).
+# Override via env CBNR_SERVER_CLIMATE_CSV; default looks for
+# data/directional_3scenarios/server_climate_direction.csv shipped with the
+# repo or under TASK_ROOT.
+# 服务端预计算的气候+方向表（resident_breeding 与 all_seasons）。
+server_csv <- Sys.getenv(
+  "CBNR_SERVER_CLIMATE_CSV",
+  unset = file.path(TASK_ROOT, "data", "directional_3scenarios",
+                     "server_climate_direction.csv"))
+if (!file.exists(server_csv)) {
+  stop(sprintf(paste0(
+    "Server climate+direction CSV not found at:\n  %s\n",
+    "Set env var CBNR_SERVER_CLIMATE_CSV to its path or copy the file ",
+    "(see README §Data sources)."), server_csv))
+}
 botw_csv   <- file.path(TASK_ROOT, "directional_v3", "data",
                         "scenario_botw_clean_direction_metrics.csv")
 cbnr_csv   <- file.path(TASK_ROOT, "data", "bird_new_records_clean_corrected_keepall.csv")

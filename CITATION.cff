@@ -1,0 +1,49 @@
+# Citation metadata for the CBNR repository.
+# Use this file with citation managers (GitHub "Cite this repository"),
+# zenodo, or the `cffconvert` CLI.
+cff-version: 1.2.0
+message: "If you use this database, please cite the article and the repository."
+type: dataset
+title: "China Bird New Distribution Records (CBNR), 2000–2025: a peer-reviewed literature-based database and reproducible analytical pipeline"
+abstract: |
+  A curated, literature-based database of provincial-level new bird
+  distribution records in China spanning 2000–2025, with full taxonomic
+  harmonisation against the Catalogue of Life China 2025 and BirdLife HBW
+  v9, plus the analytical pipeline that produces every figure and table
+  in the companion Scientific Data manuscript (in preparation). The
+  3-scenario directional analysis quantifies bearing, distance and lon/lat
+  displacement of each new record relative to the species' historical
+  BirdLife range polygon under three alternative range definitions
+  (resident + breeding; user-curated BOTW_clean; all seasonal categories).
+keywords:
+  - biodiversity
+  - new distribution records
+  - China
+  - birds
+  - BirdLife
+  - range shift
+  - Wallacean shortfall
+  - macroecology
+  - Catalogue of Life China
+authors:
+  - family-names: "Ding"
+    given-names: "Chenchen"
+    affiliation: "Peking University"
+    orcid: "https://orcid.org/0000-0000-0000-0000"   # update if available
+    email: chenchending1992@gmail.com
+repository-code: "https://github.com/dingchenchen6/CBNR-china-bird-new-records"
+license:
+  - MIT          # for code under code/**
+  - CC-BY-4.0    # for data and figures
+version: "v0.3.0-3scenarios"
+date-released: "2026-05-11"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "Ding"
+      given-names: "Chenchen"
+      affiliation: "Peking University"
+  title: "A peer-reviewed literature-based database of provincial-level new bird distribution records in China (2000–2025)"
+  journal: "Scientific Data"
+  status: "in preparation"
+  year: 2026

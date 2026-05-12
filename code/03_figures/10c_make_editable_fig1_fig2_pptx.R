@@ -25,12 +25,29 @@ suppressPackageStartupMessages({
   library(dplyr); library(tidyr); library(readr); library(stringr); library(fs)
 })
 
-HERE <- normalizePath(dirname(sys.frames()[[1]]$ofile %||% getwd()),
-                      mustWork = FALSE)
-if (!dir.exists(HERE)) HERE <- "."
-TASK_ROOT <- normalizePath(file.path(HERE, ".."), mustWork = FALSE)
+# Portable script-relative resolution + env-var override (no machine paths).
+# 可移植脚本：依次尝试脚本位置、CWD、CBNR_TASK_ROOT 环境变量。
+get_script_path <- function() {
+  ca <- commandArgs(trailingOnly = FALSE)
+  fa <- grep("^--file=", ca, value = TRUE)
+  if (length(fa) > 0) {
+    cand <- sub("^--file=", "", fa[1])
+    if (file.exists(cand)) return(normalizePath(cand))
+  }
+  if (sys.nframe() >= 1 && !is.null(sys.frames()[[1]]$ofile))
+    return(normalizePath(sys.frames()[[1]]$ofile, mustWork = FALSE))
+  normalizePath(getwd())
+}
+HERE <- get_script_path()
+HERE <- if (dir.exists(HERE)) HERE else dirname(HERE)
+TASK_ROOT <- Sys.getenv(
+  "CBNR_TASK_ROOT",
+  unset = normalizePath(file.path(HERE, "..", ".."), mustWork = FALSE)
+)
 if (!dir.exists(TASK_ROOT) || !file.exists(file.path(TASK_ROOT, "code"))) {
-  TASK_ROOT <- "/Users/dingchenchen/Documents/NEW DISTRIBUTION RECORDS/Updated_reanalysis"
+  stop(sprintf(
+    "Cannot resolve task root. Set CBNR_TASK_ROOT to the directory containing 'code/'. Got: %s",
+    TASK_ROOT))
 }
 fig_v3   <- file.path(TASK_ROOT, "figures_v3")
 phy_dir  <- file.path(TASK_ROOT, "phylogeny_v3", "figures")

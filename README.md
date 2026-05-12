@@ -1,16 +1,35 @@
 # CBNR — China Bird New Distribution Records (2000–2025)
 
-**Authors:** Chenchen Ding (Peking University) & coauthors
-**Status:** Scientific Data manuscript in preparation
-**Repository date:** 2026-05-11 (directional 3-scenario release)
+[![License: MIT (code)](https://img.shields.io/badge/Code-MIT-blue.svg)](LICENSE)
+[![Data: CC-BY-4.0](https://img.shields.io/badge/Data-CC--BY--4.0-orange.svg)](LICENSE)
+[![Status](https://img.shields.io/badge/Manuscript-Scientific%20Data%20in%20prep-yellow.svg)](#citation)
+
+**Author:** Chenchen Ding (Peking University) & coauthors
+**Repository release:** 2026-05-11 (3-scenario directional + climate)
+**Public repository:** <https://github.com/dingchenchen6/CBNR-china-bird-new-records>
 
 A reproducible, peer-reviewed literature-based database of provincial-level
-new bird distribution records in China, plus the analytical pipeline that
-produces every figure and table in the accompanying *Scientific Data*
-manuscript.
+new bird distribution records in China (2000–2025), accompanied by the full
+analytical pipeline that produces every figure and table in the companion
+*Scientific Data* manuscript.
 
 中国鸟类省级新分布纪录（CBNR）数据库 (2000–2025) 与配套 Scientific Data
 稿件全套可复现分析管线。
+
+---
+
+## Table of contents / 目录
+
+- [Headline numbers](#headline-numbers--关键统计)
+- [Directional analysis — three scenarios](#directional-analysis--three-range-definition-scenarios--三方案方向性分析)
+- [Repository layout](#repository-layout--目录结构)
+- [How to reproduce](#how-to-reproduce--如何复现)
+- [R / Python dependencies](#r--python-dependencies--依赖)
+- [Data dictionary](#data-dictionary--数据字典)
+- [Documentation files](#documentation-files--辅助文档)
+- [Citation](#citation--引用)
+- [License](#license--许可)
+- [Acknowledgements & contact](#acknowledgements--致谢)
 
 ---
 
@@ -37,17 +56,16 @@ against the species' historical BirdLife range polygon within China under
 
 每条新纪录在以下 **三种范围定义** 下计算方位、位移、距离与经纬度变化：
 
-| Scenario | Range definition | Records covered | Median dist. to centroid | Median dist. to edge | Mean point ΔT (°C, 1970–2000 → year-of-record) |
+| Scenario | Range definition | Records with polygon | Median dist. to centroid | Median dist. to edge | Mean point ΔT (°C, 1970–2000 → year-of-record) |
 |---|---|---|---|---|---|
-| **S1** | Resident + Breeding (BOTW 2024, SEASONAL=1,2) | 762 (74.7%) | 1,936 km | 510 km | +0.89 |
-| **S2** | User-curated `BOTW_clean.gpkg` (466 species pre-clipped) | 771 (75.6%) | 1,262 km | 548 km | +0.90 |
-| **S3** | All seasonal categories pooled (no filter) | 860 (84.3%) | 2,024 km | 469 km | +0.88 |
+| **S1** | Resident + Breeding (BOTW 2024, SEASONAL = 1, 2) | 762 (74.7 %) | 1,936 km | 510 km | +0.89 |
+| **S2** | User-curated `BOTW_clean.gpkg` (466 species pre-clipped) | 771 (75.6 %) | 1,262 km | 548 km | +0.90 |
+| **S3** | All seasonal categories pooled (no filter) | 860 (84.3 %) | 2,024 km | 469 km | +0.88 |
 
 - Synonyms resolved via the BirdLife HBW v9 checklist (11,195 accepted + 2,734 alternative forms).
-- 563/564 CBNR species mapped to BirdLife taxonomy; 1 unmatched name audited.
-- Climate metrics use WorldClim v2.1 5 m × 5 m baseline + CRU TS annual data.
-
-Main outputs are in `data/directional_3scenarios/` and `figures/directional_3scenarios/`.
+- 563 / 564 CBNR species mapped to BirdLife taxonomy (1 unmatched name audited).
+- Climate metrics use WorldClim v2.1 5′ baseline + CRU TS 4.09 annual data.
+- Main outputs: `data/directional_3scenarios/` and `figures/directional_3scenarios/`.
 
 ---
 
@@ -55,106 +73,168 @@ Main outputs are in `data/directional_3scenarios/` and `figures/directional_3sce
 
 ```
 .
-├── code/                                        Scripts (R + Python)
-│   ├── 01_pipeline/
-│   │   └── 01c_build_canonical_keep_all_years.R     Master cleaning + flag
-│   ├── 02_analyses/
-│   │   ├── make_spatiotemporal_keepall.R            Maps Fig 2(a)(b)
-│   │   ├── make_sankey_topN_others_keepall.R        Sankey Fig 2(c)
-│   │   └── run_bird_phylogeny_new_records_mctavish.R Circular tree Fig 1
-│   ├── 03_figures/
-│   │   ├── 07c_compose_figure2_v3_aligned.R         Composite Fig 2
-│   │   └── 08c_make_flowchart_and_fig1.R            Flowchart + trim
-│   └── 04_manuscript/
-│       └── 09c_update_manuscript_v3_tracked.py      Tracked-changes DOCX
+├── README.md                                    This file
+├── LICENSE                                      MIT (code) + CC-BY-4.0 (data)
+├── CITATION.cff                                 Machine-readable citation
+├── .gitignore  .gitattributes
 │
-├── data/                                        Tabular outputs
-│   ├── cbnr_clean_events.csv                    Canonical analytical table
+├── code/
+│   ├── 01_pipeline/                             ▶ STEP 1: clean & validate
+│   │   └── 01c_build_canonical_keep_all_years.R   Keep all years + flag pre-2000
+│   ├── 02_analyses/                             ▶ STEP 2: per-domain analyses
+│   │   ├── make_spatiotemporal_keepall.R         → Fig 2 panels (a)(b) maps
+│   │   ├── make_sankey_topN_others_keepall.R     → Fig 2 panel (c) sankey
+│   │   └── run_bird_phylogeny_new_records_mctavish.R  → Fig 1 circular tree
+│   ├── 03_figures/                              ▶ STEP 3: compose figures
+│   │   ├── 07c_compose_figure2_v3_aligned.R       Fig 2 composite (a/b/c)
+│   │   ├── 08c_make_flowchart_and_fig1.R          Flowchart + Fig 1 trim
+│   │   └── 10c_make_editable_fig1_fig2_pptx.R     Editable PPTX export
+│   ├── 04_manuscript/                           ▶ STEP 4: assemble DOCX
+│   │   └── 09c_update_manuscript_v3_tracked.py    Tracked-changes DOCX
+│   └── 05_directional/                          ▶ STEP 5: directional analysis
+│       ├── 11c_directional_radar_windrose_figures.R   Single-source radar+windrose
+│       ├── 12c_compose_figure3_directional.R          Single-source Fig 3
+│       ├── 13_local_compute_botw_clean_scenario.R     S2 local compute
+│       ├── 14_merge_and_render_3scenarios.R           Merge S1+S2+S3, render
+│       ├── 15_compose_figure3_3scenarios.R            3-scenario Fig 3 composite
+│       └── server_compute_directional_only.R          BOTW 2024 server compute
+│
+├── data/
+│   ├── cbnr_clean_events.csv                    Canonical analytical table (1,020 rows)
 │   ├── cbnr_trait_pool.csv                      Species pool + AVONET traits
+│   ├── Table3_order_breakdown.csv               Manuscript Table 3 (Wilson 95% CI)
 │   ├── qc_before_after_summary.csv              QC denominator changes
 │   ├── qc_duplicate_drop_log.csv                Province-level dedup log
-│   └── Table3_order_breakdown.csv               Manuscript Table 3 (Wilson CI)
+│   ├── directional/                             Early (single-source) directional analysis
+│   │   ├── cbnr_directional_metrics_per_record.csv
+│   │   ├── cbnr_directional_species_summary.csv
+│   │   ├── cbnr_directional_synonym_audit.csv
+│   │   └── direction_*_counts_*.csv              8-sector counts
+│   └── directional_3scenarios/                  3-scenario release ★
+│       ├── cbnr_directional_3scenarios_merged.csv   Per-record (1,020 × 77 cols)
+│       ├── scenario_botw_clean_direction_metrics.csv  S2 detail
+│       └── scenario_climate_summary.csv         Cross-scenario summary
 │
-├── figures/                                     Final manuscript figures
-│   ├── figure1_phylogeny_trimmed.{png,pdf,pptx}
-│   ├── figure2_combined_aligned.{png,pdf,pptx}  Map + Map + Sankey composite
-│   ├── figure2_panel_a_count_map.{png,pdf,pptx} (a) Choropleth + SCS inset
-│   ├── figure2_panel_b_point_map.{png,pdf,pptx} (b) Points + SCS inset
-│   ├── figure2_panel_c_sankey_topN.{png,pdf,pptx} (c) Sankey w/ Others
-│   ├── figure5_qc_validation.{png,pdf}          QC three-panel
-│   └── figure_flowchart_pipeline.{png,pdf,svg,pptx} Technical flowchart
+├── figures/
+│   ├── figure1_phylogeny_trimmed.{png,pdf,pptx}                    Fig 1
+│   ├── figure2_combined_aligned.{png,pdf,pptx}                     Fig 2 (a)(b)(c)
+│   ├── figure2_panel_{a,b,c}_*.{png,pdf,pptx}                      Per-panel
+│   ├── figure5_qc_validation.{png,pdf}                             Fig 5
+│   ├── figure_flowchart_pipeline.{png,pdf,svg,pptx}                Technical flowchart
+│   ├── directional/                             Early directional figures
+│   └── directional_3scenarios/                  3-scenario directional figures ★
+│       ├── figure3_directional_3scenarios_combined.{png,pdf,pptx}  Manuscript Fig 3
+│       └── scenario{1,2,3}_overall_*.{png,pdf,pptx}                Per-scenario panels
 │
-└── results/                                     Documents & reports
-    ├── run_log_01c.md
-    ├── CBNR_ScientificData_20260510_v3_tracked.docx
-    └── 深度审查报告_中国鸟类新纪录研究_20260510.md
+├── docs/
+│   ├── REPRODUCE.md                             Step-by-step reproduction recipe
+│   ├── DATA_DICTIONARY.md                       Full column catalogue
+│   └── CHANGELOG.md                             Release history
+│
+└── results/
+    ├── CBNR_ScientificData_20260510_v3_tracked.docx   Tracked-changes manuscript
+    ├── 深度审查报告_中国鸟类新纪录研究_20260510.md       In-depth review report
+    └── run_log_01c.md                                 Cleaning run log
 ```
+
+★ = 3-scenario release (2026-05-11). See [docs/CHANGELOG.md](docs/CHANGELOG.md).
 
 ---
 
 ## How to reproduce / 如何复现
 
+The pipeline runs locally with one master Excel file and one R/Python
+environment.  For directional analysis Scenarios 1 and 3 you also need the
+server-computed climate+direction CSV (see "Data sources" in
+[docs/REPRODUCE.md](docs/REPRODUCE.md)).
+
+完整复现需要一个主 Excel 表 + R/Python 环境。Scenarios 1 & 3 需要服务端
+预计算的气候+方向 CSV — 详见 [docs/REPRODUCE.md](docs/REPRODUCE.md)。
+
 ```bash
-# Pre-requisites: R ≥ 4.5; Python ≥ 3.9; the master spreadsheet
-#   `鸟类新纪录20260508.xlsx` must be in the parent directory of code/.
-# 必备：R ≥ 4.5；Python ≥ 3.9；主表 `鸟类新纪录20260508.xlsx` 放在 code/ 上一级。
+# Prerequisites
+#   R ≥ 4.5, Python ≥ 3.9
+#   Master spreadsheet `鸟类新纪录20260508.xlsx` in repository parent dir
+#   (or override via env var CBNR_MASTER_XLSX)
 
-# 1) Build canonical analytical CSV (keep-all-years rule)
-Rscript code/01_pipeline/01c_build_canonical_keep_all_years.R
-
-# 2) Re-run downstream analyses (use env vars to redirect outputs)
 ROOT=$PWD
 CLEAN=$ROOT/data/cbnr_clean_events.csv
 
-BIRD_CLEAN_PATH=$CLEAN  BIRD_TASK_DIR=$ROOT/results/spatiotemporal \
+# 1. Clean the master spreadsheet → canonical CSV
+Rscript code/01_pipeline/01c_build_canonical_keep_all_years.R
+
+# 2. Run domain analyses (env vars redirect outputs into the repo)
+BIRD_CLEAN_PATH=$CLEAN  BIRD_TASK_DIR=$ROOT/figures/spatiotemporal \
   BIRD_SHAPE_DIR=$ROOT/data/shapefile_base \
   Rscript code/02_analyses/make_spatiotemporal_keepall.R
 
-BIRD_CLEAN_PATH=$CLEAN  BIRD_TASK_DIR=$ROOT/results/sankey \
+BIRD_CLEAN_PATH=$CLEAN  BIRD_TASK_DIR=$ROOT/figures/sankey \
   BIRD_SANKEY_N_COLLAPSE=5 \
   Rscript code/02_analyses/make_sankey_topN_others_keepall.R
 
-BIRD_TASK_DIR=$ROOT/results/phylogeny \
+BIRD_TASK_DIR=$ROOT/figures/phylogeny \
   BIRD_MASTER_XLSX=$ROOT/../鸟类新纪录20260508.xlsx \
   BIRD_CORRECTED_EVENTS_CSV=$CLEAN \
-  BIRD_MCTAVISH_TREE=$ROOT/data/external/summary_dated_clements.nex \
   Rscript code/02_analyses/run_bird_phylogeny_new_records_mctavish.R
 
-# 3) Compose Figure 2 + flowchart + trim Fig 1
+# 3. Compose Figure 1 (trim), Figure 2 (composite), flowchart
 Rscript code/03_figures/07c_compose_figure2_v3_aligned.R
 Rscript code/03_figures/08c_make_flowchart_and_fig1.R
+Rscript code/03_figures/10c_make_editable_fig1_fig2_pptx.R    # editable PPTX
 
-# 4) Update DOCX with tracked changes
+# 4. Directional analysis (3 scenarios + Figure 3 composite)
+Rscript code/05_directional/13_local_compute_botw_clean_scenario.R   # S2 local
+Rscript code/05_directional/14_merge_and_render_3scenarios.R         # merge S1/S2/S3
+Rscript code/05_directional/15_compose_figure3_3scenarios.R          # Fig 3
+
+# 5. Update DOCX with tracked changes
 python3 code/04_manuscript/09c_update_manuscript_v3_tracked.py
 ```
 
+A guided walk-through with environment-variable references and external
+data location notes lives in [`docs/REPRODUCE.md`](docs/REPRODUCE.md).
+
 ---
 
-## R package dependencies / R 包依赖
+## R / Python dependencies / 依赖
+
+**R ≥ 4.5** packages (CRAN unless noted):
 
 ```r
 install.packages(c(
   "readxl", "readr", "dplyr", "tidyr", "stringr", "forcats", "tibble",
   "ggplot2", "ggalluvial", "patchwork", "scales", "cowplot",
-  "sf", "officer", "rvg", "export", "magick",
-  "DiagrammeR", "DiagrammeRsvg", "rsvg",
-  "ape", "fs"
+  "sf", "officer", "rvg", "magick", "DiagrammeR", "DiagrammeRsvg", "rsvg",
+  "ape", "fs", "DBI", "RSQLite", "writexl"
 ))
-# Bioconductor:
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
 BiocManager::install(c("ggtree", "treeio"))
 ```
 
-System libraries (macOS via Homebrew):
+**Python ≥ 3.9** packages:
+
+```bash
+pip install python-docx pandas openpyxl
 ```
+
+**System libraries (macOS via Homebrew)** — for editable PPTX (rvg/gdtools):
+
+```bash
 brew install pkgconf cairo fontconfig gettext libpng
-# gdtools/rvg may need source build to match the running R version:
-#   R CMD INSTALL gdtools_<v>.tar.gz   (may need to patch configure to drop --static)
-#   R CMD INSTALL rvg_<v>.tar.gz       (may need PKG_CPPFLAGS/PKG_LIBS to libpng)
+# gdtools / rvg may need a source build to match the running R version;
+# see docs/REPRODUCE.md §System libraries for the verified recipe.
 ```
 
 ---
 
-## Data dictionary (cbnr_clean_events.csv) / 数据字典节选
+## Data dictionary / 数据字典
+
+See [`docs/DATA_DICTIONARY.md`](docs/DATA_DICTIONARY.md) for the full
+77-column catalogue of `data/directional_3scenarios/cbnr_directional_3scenarios_merged.csv`
+plus all other published CSVs.
+
+The canonical event table (`data/cbnr_clean_events.csv`) key columns:
 
 | Column | Type | Description |
 |---|---|---|
@@ -178,16 +258,33 @@ brew install pkgconf cairo fontconfig gettext libpng
 
 ---
 
-## License / 许可
+## Documentation files / 辅助文档
 
-- **Code**: MIT
-- **Data**: CC-BY-4.0 (please cite Ding et al., in preparation)
+| Path | What's inside |
+|---|---|
+| [`docs/REPRODUCE.md`](docs/REPRODUCE.md)         | Step-by-step reproduction recipe (data sources, env vars, system libs, troubleshooting) |
+| [`docs/DATA_DICTIONARY.md`](docs/DATA_DICTIONARY.md) | Every column in every published CSV |
+| [`docs/CHANGELOG.md`](docs/CHANGELOG.md)         | Release history (v1 → v2 → v3 → 3-scenario) |
+| [`results/深度审查报告_中国鸟类新纪录研究_20260510.md`](results/深度审查报告_中国鸟类新纪录研究_20260510.md) | In-depth methodological review (bilingual) |
 
-If you reuse the CBNR analytical release in published work, please cite:
+---
+
+## Citation / 引用
+
+If you reuse the CBNR analytical release or the pipeline, please cite:
 
 > Ding, C. et al. (in prep.). A peer-reviewed literature-based database of
 > provincial-level new bird distribution records in China (2000–2025).
 > *Scientific Data*.
+
+Machine-readable citation in [`CITATION.cff`](CITATION.cff).
+
+---
+
+## License / 许可
+
+- **Code** (`code/**`): MIT — see [`LICENSE`](LICENSE).
+- **Data** (`data/**`, `figures/**`, `results/**`): CC-BY-4.0.
 
 ---
 
@@ -196,10 +293,7 @@ If you reuse the CBNR analytical release in published work, please cite:
 This work builds on the framework developed for Chinese mammal new records
 (Ding et al. 2025, *Global Ecology and Biogeography* 34: e70165). We thank
 all contributors to the LLM-extraction calibration set and to the
-canonical-identity audit.
+canonical-identity audit, and the BirdLife International / HBW team for
+the global avian range polygons.
 
----
-
-## Contact / 联系
-
-Chenchen Ding — chenchending1992@gmail.com
+**Contact:** Chenchen Ding — <chenchending1992@gmail.com>
